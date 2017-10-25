@@ -1,6 +1,5 @@
 <template>
     <div>
-        <alert-msg :success="success" :errors="errors"></alert-msg>
         <h1>Items</h1>
 
         <div class="row">
@@ -35,30 +34,15 @@
 
 <script>
     import {HTTP} from '../http/http';
-    import AlertMsg from './AlertMsg.vue';
     export default {
         data(){
             return{
-                items: [],
-                errors: {
-                    showError: false,
-                    errorMsg: '',
-                    errorColor: 'alert alert-danger'
-                },
-                success: {
-                    showSuccess: false,
-                    successMsg: '',
-                    successColor: 'alert alert-success'
-                }
+                items: []
             }
         },
 
-        created: function()
-        {
+        created: function(){
             this.fetchItems();
-        },
-        components: {
-            AlertMsg
         },
         methods: {
             fetchItems() {
@@ -68,20 +52,24 @@
               });
             },
             deleteItem(id) {
-              // let uri = 'http://localhost:4000/items/delete/'+id;
-               this.items.splice(id, 1);
-              // this.axios.get(uri);
-
+        
                 let uri = `items/delete/${id}`;
                 HTTP.delete(uri).then((response) => {
-                    this.success.successMsg = 'Your item was deleted';
-                    this.success.showSuccess = true;
+                    let name = response.data.name;
+                    this.$alert.success({ duration: 5000, transition: 'none', message: `Item was deleted` });
+                   
+
+                    let arr = this.items;
+                    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
+                    //https://stackoverflow.com/questions/29997710/remove-object-from-array-of-objects
+                    //es6 findIndex, then splice
+                    const matchesEl = (obj) => obj._id === id;
+                    arr.splice(arr.findIndex(matchesEl), 1);
 
                     
                 }).catch(error => {
                     if(error.response) {
-                        this.errors.showError = true;
-                        this.errors.errorMsg = error.response.data.message;
+                        this.$alert.danger({ duration: 5000, transition: 'none', message: error.response.data.message });
                     }  
                 });
             }

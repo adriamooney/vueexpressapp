@@ -1,6 +1,5 @@
 <template>
     <div>
-        <alert-msg :success="success" :errors="errors"></alert-msg>
         <h1>Edit Item</h1>
         <div class="row">
           <div class="col-md-10"></div>
@@ -27,25 +26,11 @@
 
 <script>
     import {HTTP} from '../http/http';
-    import AlertMsg from './AlertMsg.vue';
     export default{
         data(){
             return{
-                item:{},
-                errors: {
-                    showError: false,
-                    errorMsg: '',
-                    errorColor: 'alert alert-danger'
-                  },
-                success: {
-                    showSuccess: false,
-                    successMsg: '',
-                    successColor: 'alert alert-success'
-                  }
+                item:{}
             }
-        },
-        components: {
-            AlertMsg
         },
         created: function(){
             this.getItem();
@@ -56,13 +41,12 @@
             {
               let uri = 'items/edit/' + this.$route.params.id;
                 HTTP.get(uri).then((response) => {
-                    this.success.successMsg = 'Your item was received';
-                    this.errors.showSuccess = true;
+                    
                     this.item = response.data;
                 }).catch(error => {
                     if(error.response) {
-                        this.errors.showError = true;
-                        this.errors.errorMsg = error.response.data.message;
+             
+                        this.$alert.danger({ duration: 5000, transition: 'none', message: error.response.data.message });
                     }  
                 });
             },
@@ -71,16 +55,15 @@
             {
               let uri = 'items/update/' + this.$route.params.id;
                 HTTP.put(uri, this.item).then((response) => {
-                    this.success.successMsg = 'Your item was updated';
-                    this.success.showSuccess = true;
+
+                    this.$alert.success({ duration: 5000, transition: 'none', message: 'Item was updated' });
                     setTimeout(() => {
                         this.$router.push({name: 'DisplayItem'});
                     }, 1000);
                     
                 }).catch(error => {
                     if(error.response) {
-                        this.errors.showError = true;
-                        this.errors.errorMsg = error.response.data.message;
+                        this.$alert.danger({ duration: 5000, transition: 'none', message: error.response.data.message });
                     }  
                 });
             }

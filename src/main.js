@@ -5,9 +5,16 @@ import App from './App.vue';
 import CreateItem from './components/CreateItem.vue';
 import DisplayItem from './components/DisplayItem.vue';
 import EditItem from './components/EditItem.vue';
+import Test from './components/views/Test.vue';
+import VueAlert from '@vuejs-pt/vue-alert';
+import lodash from 'lodash'
+import VueLodash from 'vue-lodash'
 
 import VueRouter from 'vue-router';
+
 Vue.use(VueRouter);
+Vue.use(VueAlert);
+Vue.use(VueLodash, lodash);
 
 import VueAxios from 'vue-axios';
 import axios from 'axios';
@@ -28,6 +35,11 @@ const routes = [
             name: 'EditItem',
             path: '/edit/:id',
             component: EditItem
+    },
+    {
+            name: 'Test',
+            path: '/test',
+            component: Test
     }
 ];
 

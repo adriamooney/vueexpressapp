@@ -1,6 +1,7 @@
 <template>
     <div class="container">
         <div>
+            <vue-alert></vue-alert>
             <transition name="fade">
                 <router-view></router-view>
             </transition>

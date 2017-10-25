@@ -1,24 +1,23 @@
-require('./config/config');
 const express = require('express');
-const path = require('path');
-const _ = require('lodash');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const {ObjectID} = require('mongodb');
-const {mongoose} = require('./db/mongoose');
+const itemRoutes = express.Router();
+const Item = require('../models/Item');
 
-// const itemRoutes = require('./expressRoutes/items');
+// // middleware that is specific to this router
+// router.use(function timeLog (req, res, next) {
+//   console.log('Time: ', Date.now())
+//   next()
+// })
+// // define the home page route
+// router.get('/', function (req, res) {
+//   res.send('Birds home page')
+// })
+// // define the about route
+// router.get('/about', function (req, res) {
+//   res.send('About birds')
+// })
 
-const app = express();
-
-app.use(bodyParser.json());
-app.use(cors());
-// app.use('/items', itemRoutes); //this router is not working
-
-const {Item} = require('./models/Item');
-
-
-app.post('/add', (req, res) => {
+//create item
+itemRoutes.post('/add', (req, res) => {
 	let item = new Item(req.body);
 
 	item.save().then((doc) => {
@@ -28,7 +27,8 @@ app.post('/add', (req, res) => {
 	});
 });
 
-app.get('/items', (req, res) => {
+//display 'get' items
+itemRoutes.get('/items', (req, res) => {
 	Item.find().then((items)=> {
 		console.log(items);
 		res.send(items);
@@ -37,8 +37,8 @@ app.get('/items', (req, res) => {
 	});
 });
 
-//get /items/1234
-app.get('/items/edit/:id', (req,res)=> {
+// /get /items/1234
+itemRoutes.get('/items/edit/:id', (req,res)=> {
 	let id = req.params.id;
 	//res.send(req.params);
 
@@ -61,7 +61,7 @@ app.get('/items/edit/:id', (req,res)=> {
 });
 
 //put /items/
-app.put('/items/update/:id', (req, res) => {
+itemRoutes.put('/items/update/:id', (req, res) => {
 	let id = req.params.id;
 	let body = _.pick(req.body, ['name', 'price']);
 	Item.findOneAndUpdate({_id: id}, {$set: body}, {new:true}).then((item) => {
@@ -76,7 +76,7 @@ app.put('/items/update/:id', (req, res) => {
 });
 
 //delete item
-app.delete('/items/delete/:id', (req, res) => {
+itemRoutes.delete('/items/delete/:id', (req, res) => {
 	let id = req.params.id;
 
 	if(!ObjectID.isValid(id)) {
@@ -97,10 +97,4 @@ app.delete('/items/delete/:id', (req, res) => {
 	});
 });
 
-
-      
-const port = process.env.PORT;
-
-const server = app.listen(port, () => {
-	console.log(`server running on ${port}`);
-});
+module.exports = itemRoutes;

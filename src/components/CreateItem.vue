@@ -2,8 +2,7 @@
   <div>
     <h1>Create An Item</h1>
     <router-link :to="{ name: 'DisplayItem' }" class="btn btn-primary">Display Items</router-link>
-    <div v-show="errors.showError" :class="errors.errorColor">{{errors.errorMsg}}</div>
-    <div v-show="success.showSuccess" :class="success.successColor">{{success.successMsg}}</div>
+    <router-link :to="{ name: 'Test' }" class="btn btn-primary">Test</router-link>
     <form>
       <div class="row">
         <div class="col-md-6">
@@ -32,19 +31,7 @@ import {HTTP} from '../http/http';
   export default {
     data(){
         return{
-          item:{},
-          errors: {
-            showError: false,
-            errorMsg: '',
-            errorColor: 'alert alert-danger'
-          },
-          success: {
-            showSuccess: false,
-            successMsg: '',
-            successColor: 'alert alert-success'
-          }
-          
-          
+          item:{}   
         }
     },
     methods: {
@@ -52,18 +39,16 @@ import {HTTP} from '../http/http';
         
         HTTP.post('add', this.item).then((response) => {
           console.log(response.data);
-          this.success.successMsg = 'Your item was received';
-          this.success.showSuccess = true;
+          this.$alert.success({ duration: 5000, transition: 'none', message: 'Your item was entered' });
         }).catch(error => {
             if(error.response) {
-                this.errors.showError = true;
-                this.errors.errorMsg = error.response.data.message;
+                this.$alert.danger({ duration: 5000, transition: 'none', message: error.response.data.message });
+
             }  
         });
       },
       clearError() {
-        this.errors.showError = false;
-        this.errors.errorMsg = '';
+        this.$alert.hide();
       } 
   }
 }
